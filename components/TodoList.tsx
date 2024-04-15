@@ -2,6 +2,7 @@ import { Database } from "@/lib/schema";
 import { Session, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 import { getTestList } from "@/pages/api/apiUtils";
+import { read, utils } from "xlsx";
 
 type Todos = Database["public"]["Tables"]["todos"]["Row"];
 
@@ -80,6 +81,62 @@ export default function TodoList({ session }: { session: Session }) {
     });
   };
 
+  // const handleExcelUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = event.target.files?.[0];
+  //   if (file) {
+  //     // FileReader를 사용하여 파일 읽기
+  //     const reader = new FileReader();
+  //     reader.onload = (e) => {
+  //       // Excel 파일의 버퍼를 읽어 워크북으로 생성
+  //       const arrayBuffer = e.target?.result;
+  //       const workbook = read(arrayBuffer, { type: "array" });
+
+  //       // 첫 번째 시트를 선택
+  //       const sheetName = workbook.SheetNames[0];
+  //       const sheet = workbook.Sheets[sheetName];
+
+  //       // 시트의 데이터를 객체로 변환
+  //       const data = utils.sheet_to_json(sheet);
+
+  //       console.log("객체 데이터:", data);
+  //       // 데이터를 사용하여 필요한 로직을 구현하세요.
+  //     };
+  //     reader.readAsArrayBuffer(file);
+  //   }
+  // };
+
+  const [data, setData] = useState<any[]>([]);
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+    if (file) {
+      // 파일을 읽기 위해 FileReader 사용
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        // Excel 파일을 읽어 워크북 생성
+        const arrayBuffer = e.target?.result;
+        const workbook = read(arrayBuffer, { type: "array" });
+
+        // 첫 번째 시트를 선택
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+
+        // 시트의 데이터를 객체로 변환
+        const sheetData = utils.sheet_to_json(sheet);
+        setData(sheetData); // 데이터를 상태에 저장
+
+        console.log("객체 데이터:", sheetData);
+        // 데이터에 대한 추가 작업을 수행할 수 있습니다.
+      };
+      reader.readAsArrayBuffer(file);
+    }
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+  };
+
   return (
     <div className="w-full">
       <h1 className="mb-12">Todo List.</h1>
@@ -90,9 +147,28 @@ export default function TodoList({ session }: { session: Session }) {
         }}
         className="flex gap-2 my-2"
       >
-        <button className={"btn-black"} onClick={() => getTestListHandler()}>
-          testList
-        </button>
+        <div>
+          <button className={"btn-black"} onClick={() => getTestListHandler()}>
+            testList
+          </button>
+          {/* <input
+            type="file"
+            accept=".xlsx, .xls"
+            onChange={handleExcelUpload}
+          /> */}
+          <div
+            style={{
+              border: "2px dashed #ccc",
+              padding: "20px",
+              textAlign: "center",
+            }}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+          >
+            <p>Excel 파일을 이 영역에 드래그 앤 드롭하세요</p>
+          </div>
+        </div>
+
         <div>
           <input
             className="rounded w-full p-2"
