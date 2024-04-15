@@ -1,6 +1,7 @@
 import { Database } from "@/lib/schema";
 import { Session, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
+import { getTestList } from "@/pages/api/apiUtils";
 
 type Todos = Database["public"]["Tables"]["todos"]["Row"];
 
@@ -71,6 +72,14 @@ export default function TodoList({ session }: { session: Session }) {
     }
   };
 
+  const getTestListHandler = () => {
+    // const testList = getTestList();
+    // console.log("testList: ", testList);
+    getTestList().then((res) => {
+      console.log("testList: ", res);
+    });
+  };
+
   return (
     <div className="w-full">
       <h1 className="mb-12">Todo List.</h1>
@@ -81,6 +90,9 @@ export default function TodoList({ session }: { session: Session }) {
         }}
         className="flex gap-2 my-2"
       >
+        <button className={"btn-black"} onClick={() => getTestListHandler()}>
+          testList
+        </button>
         <div>
           <input
             className="rounded w-full p-2"
