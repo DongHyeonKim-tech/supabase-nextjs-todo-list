@@ -127,7 +127,7 @@ export default function TodoList({ session }: { session: Session }) {
         setData(sheetData); // 데이터를 상태에 저장
 
         console.log("객체 데이터:", sheetData);
-        // 데이터에 대한 추가 작업을 수행할 수 있습니다.
+        // 데이터에 대한 추가 작업을 수행할 수 있습니다.!
       };
       reader.readAsArrayBuffer(file);
     }
