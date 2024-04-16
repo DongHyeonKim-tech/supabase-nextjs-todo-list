@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { getTestList } from "@/pages/api/apiUtils";
 import { read, utils } from "xlsx";
 import { useRouter } from "next/router";
-
 type Todos = Database["public"]["Tables"]["todos"]["Row"];
 
 export default function TodoList({ session }: { session: Session }) {
@@ -143,6 +142,12 @@ export default function TodoList({ session }: { session: Session }) {
   return (
     <div className="w-full">
       <h1 className="mb-12">Todo List.</h1>
+      {user.identities
+        ? user.identities[0].provider === "google" ||
+          user.identities[0].provider === "kakao"
+          ? user.user_metadata.name
+          : user.user_metadata.email
+        : ""}
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -215,6 +220,7 @@ export default function TodoList({ session }: { session: Session }) {
               key={todo.id}
               todo={todo}
               onDelete={() => deleteTodo(todo.id)}
+              user={user}
             />
           ))}
         </ul>
@@ -223,7 +229,15 @@ export default function TodoList({ session }: { session: Session }) {
   );
 }
 
-const Todo = ({ todo, onDelete }: { todo: Todos; onDelete: () => void }) => {
+const Todo = ({
+  todo,
+  onDelete,
+  user,
+}: {
+  todo: Todos;
+  onDelete: () => void;
+  user: any;
+}) => {
   const supabase = useSupabaseClient<Database>();
   const [isCompleted, setIsCompleted] = useState(todo.is_complete);
 
@@ -255,7 +269,10 @@ const Todo = ({ todo, onDelete }: { todo: Todos; onDelete: () => void }) => {
         <div>
           <button
             onClick={() => {
-              router.push("/TodoDetail");
+              router.push({
+                pathname: "/TodoDetail",
+                query: { user: JSON.stringify(user) },
+              });
             }}
           >
             detail
