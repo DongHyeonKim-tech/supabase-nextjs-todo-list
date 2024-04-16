@@ -1,11 +1,33 @@
-import Head from 'next/head'
-import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
-import { Auth, ThemeSupa } from '@supabase/auth-ui-react'
-import TodoList from '@/components/TodoList'
+import Head from "next/head";
+import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
+import { Auth, ThemeSupa } from "@supabase/auth-ui-react";
+import TodoList from "@/components/TodoList";
 
 export default function Home() {
-  const session = useSession()
-  const supabase = useSupabaseClient()
+  const session = useSession();
+  const supabase = useSupabaseClient();
+
+  const googleLogin = async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        queryParams: {
+          access_type: "offline",
+          prompt: "consent",
+        },
+      },
+    });
+    console.log("data: ", data);
+    setTimeout(() => {
+      console.log("data: ", data);
+    }, 2000);
+  };
+
+  const signInWithKakao = async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "kakao",
+    });
+  };
 
   return (
     <>
@@ -23,21 +45,27 @@ export default function Home() {
                 <span className="font-sans text-4xl text-center pb-2 mb-1 border-b mx-4 align-center">
                   Login
                 </span>
-                <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} theme="dark" />
+                <button onClick={googleLogin}>Google Login</button>
+                <button onClick={signInWithKakao}>Kakao Login</button>
+                <Auth
+                  supabaseClient={supabase}
+                  appearance={{ theme: ThemeSupa }}
+                  theme="dark"
+                />
               </div>
             </div>
           </div>
         ) : (
           <div
             className="w-full h-full flex flex-col justify-center items-center p-4"
-            style={{ minWidth: 250, maxWidth: 600, margin: 'auto' }}
+            style={{ minWidth: 250, maxWidth: 600, margin: "auto" }}
           >
             <TodoList session={session} />
             <button
               className="btn-black w-full mt-12"
               onClick={async () => {
-                const { error } = await supabase.auth.signOut()
-                if (error) console.log('Error logging out:', error.message)
+                const { error } = await supabase.auth.signOut();
+                if (error) console.log("Error logging out:", error.message);
               }}
             >
               Logout
@@ -46,5 +74,5 @@ export default function Home() {
         )}
       </div>
     </>
-  )
+  );
 }
