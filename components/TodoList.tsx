@@ -3,6 +3,7 @@ import { Session, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 import { getTestList } from "@/pages/api/apiUtils";
 import { read, utils } from "xlsx";
+import { useRouter } from "next/router";
 
 type Todos = Database["public"]["Tables"]["todos"]["Row"];
 
@@ -14,6 +15,8 @@ export default function TodoList({ session }: { session: Session }) {
   const [searchText, setSearchText] = useState("");
 
   const user = session.user;
+
+  useEffect(() => console.log("user: ", user), [user]);
 
   useEffect(() => {
     const fetchTodos = async () => {
@@ -239,6 +242,7 @@ const Todo = ({ todo, onDelete }: { todo: Todos; onDelete: () => void }) => {
       console.log("error", error);
     }
   };
+  const router = useRouter();
 
   return (
     <li className="w-full block cursor-pointer hover:bg-gray-200 focus:outline-none focus:bg-gray-200 transition duration-150 ease-in-out">
@@ -247,6 +251,15 @@ const Todo = ({ todo, onDelete }: { todo: Todos; onDelete: () => void }) => {
           <div className="text-sm leading-5 font-medium truncate">
             {todo.task}
           </div>
+        </div>
+        <div>
+          <button
+            onClick={() => {
+              router.push("/TodoDetail");
+            }}
+          >
+            detail
+          </button>
         </div>
         <div>
           <input
