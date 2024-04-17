@@ -23,9 +23,15 @@ export default function Home() {
     }, 2000);
   };
 
-  const signInWithKakao = async () => {
+  const kakaoLogin = async () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "kakao",
+    });
+  };
+
+  const githubLogin = async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "github",
     });
   };
 
@@ -46,7 +52,8 @@ export default function Home() {
                   Login
                 </span>
                 <button onClick={googleLogin}>Google Login</button>
-                <button onClick={signInWithKakao}>Kakao Login</button>
+                <button onClick={kakaoLogin}>Kakao Login</button>
+                <button onClick={githubLogin}>Github Login</button>
                 <Auth
                   supabaseClient={supabase}
                   appearance={{ theme: ThemeSupa }}
