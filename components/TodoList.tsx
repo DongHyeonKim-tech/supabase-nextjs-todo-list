@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { getTestList } from "@/pages/api/apiUtils";
 import { read, utils } from "xlsx";
 import { useRouter } from "next/router";
+import UploadFile from "./UploadFile";
 type Todos = Database["public"]["Tables"]["todos"]["Row"];
 
 export default function TodoList({ session }: { session: Session }) {
@@ -164,7 +165,7 @@ export default function TodoList({ session }: { session: Session }) {
             accept=".xlsx, .xls"
             onChange={handleExcelUpload}
           /> */}
-          <div
+          {/* <div
             style={{
               border: "2px dashed #ccc",
               padding: "20px",
@@ -174,7 +175,8 @@ export default function TodoList({ session }: { session: Session }) {
             onDragOver={handleDragOver}
           >
             <p>Excel 파일을 이 영역에 드래그 앤 드롭하세요</p>
-          </div>
+          </div> */}
+          <UploadFile />
         </div>
 
         <div>
